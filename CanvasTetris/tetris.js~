@@ -1,0 +1,116 @@
+
+
+var tetris = function(){
+	var field = [];
+	for(var i = 0; i<20; i++){
+			field[i] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+		};
+		
+var Cube = function(field,fieldX,fieldY,xLock,yLock,ctx){
+	this.color = "FF0000";
+	this.field = field;
+	this.fieldX;
+	this.fieldY;
+	this.size = 20;
+	this.ctx = ctx;
+	this.x = xLock;
+	this.y = yLock;
+	this.width = this.size;
+	this.height = this.size;
+	this.isOnTheBottom = false;
+	
+	this.moveLeft = function(){
+			if(!this.isOnTheBottom){
+				if(this.x!=0){			
+					this.clear();
+					this.x -= this.size;
+					this.draw();
+				};
+			};
+		};
+		
+	this.moveRight = function(){
+			if(!this.isOnTheBottom){		
+				if(this.x !=320){	
+					this.clear();
+					this.x += this.size;
+					console.log(this.x);
+					this.draw();
+				};
+			};
+		};
+		
+		this.moveDown = function(){
+			if(!this.isOnTheBottom && this.y!==380){
+				this.clear();
+				this.y+=this.size;
+				this.draw();
+				}else{
+						this.isOnTheBottom = true;					
+					}
+			};
+			
+		this.moveUp = function(){			
+			this.clear();			
+			this.y-=this.size;
+			this.draw();
+			};
+
+		this.moveEvent= function(movement){
+		switch(movement){
+			
+			case 37:
+							this.moveLeft();
+							break;
+			case 39:
+							this.moveRight();
+							break;
+			case 40:
+							this.moveDown();
+							break;
+						};			
+			};
+			
+	this.clear = function(){
+			ctx.fillStyle="#FFFFFF";
+			ctx.fillRect(cube.x,cube.y,cube.width,cube.height);		
+			};
+	this.draw = function(){
+			ctx.fillStyle=this.color;;
+			ctx.fillRect(cube.x,cube.y,cube.width,cube.height);		
+		};	
+	}
+		
+	var c =document.getElementById("tetris");
+	
+		var ctx=c.getContext("2d");
+		
+	
+	
+
+	
+
+
+		var cube = new Cube(160,0,ctx);
+		c.onkeydown = function(env){
+			var key = env.keyCode;	
+			cube.moveEvent(key);	
+		};	
+var myTimer = window.setInterval(function(){
+	if(cube.isOnTheBottom){
+			cube = new Cube(160,0,ctx);
+	c.onkeydown = function(env){
+			var key = env.keyCode;	
+			cube.moveEvent(key);	
+		};	
+	};	
+	cube.moveDown();		
+	},1000);
+			
+	
+	myTimer();	
+	
+};
+	
+tetris();
+
