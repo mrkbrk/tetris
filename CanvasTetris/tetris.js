@@ -1,28 +1,29 @@
 
 
-var tetris = function(){
+var Tetris = function(){
 	var field = [];
 	for(var i = 0; i<17; i++){
 			field[i] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 		};
+
 	var getRandomElement = function(){
 	var number = Math.floor((Math.random()*7)+1);
 	switch(number){
 		case 1: return new BigCubeObject(8,0,ctx,field,"FF0000");
-		case 2: return new Tobject(8,0,ctx,field,"FF0000");
-		case 3: return new sObject(8,0,ctx,field,"FF0000");
-		case 4: return new ZObject(8,0,ctx,field,"FF0000");
-		case 5: return new lObject(8,0,ctx,field,"FF0000");
-		case 6: return new Lobject(8,0,ctx,field,"FF0000");
-		case 7: return new Iobject(8,0,ctx,field,"FF0000");
+		case 2: return new Tobject(8,0,ctx,field,"FFFF00");
+		case 3: return new sObject(8,0,ctx,field,"FF00FF");
+		case 4: return new ZObject(8,0,ctx,field,"00FFFF");
+		case 5: return new lObject(8,0,ctx,field,"00FF00");
+		case 6: return new Lobject(8,0,ctx,field,"0000FF");
+		case 7: return new Iobject(8,0,ctx,field,"000000");
 	}
 }
 var BigCubeObject = function(xLock,yLock,ctx,field,color){
 	this.cubes = [
-				new Cube(xLock-1,yLock,ctx,field,color),
-				new Cube(xLock-1,yLock+1,ctx,field,color),
-				new Cube(xLock,yLock,ctx,field,color),
-				new Cube(xLock,yLock+1,ctx,field,color)
+				new Cube(xLock-1,yLock,ctx,field,color,7),
+				new Cube(xLock-1,yLock+1,ctx,field,color,7),
+				new Cube(xLock,yLock,ctx,field,color,7),
+				new Cube(xLock,yLock+1,ctx,field,color,7)
 		];
 	this.field = field;
 	this.isOnTheBottom = false;
@@ -47,7 +48,7 @@ var BigCubeObject = function(xLock,yLock,ctx,field,color){
 	
 	}
 	this.moveDown = function(){
-		if(this.canMoveDown()){
+		if(this.canMoveDown() && !this.isOnTheBottom){
 			for(var i = this.cubes.length -1;i>=0;i--){
 				this.cubes[i].moveDown();
 			
@@ -96,10 +97,10 @@ var BigCubeObject = function(xLock,yLock,ctx,field,color){
 }
 var Tobject = function(xLock,yLock,ctx,field,color){
 	this.cubes = [
-				new Cube(xLock,yLock,ctx,field,color),
-				new Cube(xLock-1,yLock+1,ctx,field,color),
-				new Cube(xLock,yLock+1,ctx,field,color),
-				new Cube(xLock+1,yLock+1,ctx,field,color)
+				new Cube(xLock,yLock,ctx,field,color,6),
+				new Cube(xLock-1,yLock+1,ctx,field,color,6),
+				new Cube(xLock,yLock+1,ctx,field,color,6),
+				new Cube(xLock+1,yLock+1,ctx,field,color,6)
 		];
 	this.field = field;
 	this.isOnTheBottom = false;
@@ -126,7 +127,7 @@ var Tobject = function(xLock,yLock,ctx,field,color){
 
 	}
 	this.moveDown = function(){
-		if(this.canMoveDown()){
+		if(this.canMoveDown() && !this.isOnTheBottom){
 			switch(this.state){
 				case 1:
 				case 2:
@@ -288,10 +289,10 @@ var Tobject = function(xLock,yLock,ctx,field,color){
 
 var sObject  = function(xLock,yLock,ctx,field,color){
 	this.cubes = [
-				new Cube(xLock+1,yLock,ctx,field,color),
-				new Cube(xLock,yLock,ctx,field,color),
-				new Cube(xLock,yLock+1,ctx,field,color),
-				new Cube(xLock-1,yLock+1,ctx,field,color)
+				new Cube(xLock+1,yLock,ctx,field,color,5),
+				new Cube(xLock,yLock,ctx,field,color,5),
+				new Cube(xLock,yLock+1,ctx,field,color,5),
+				new Cube(xLock-1,yLock+1,ctx,field,color,5)
 		];
 	this.field = field;
 	this.isOnTheBottom = false;
@@ -317,7 +318,7 @@ var sObject  = function(xLock,yLock,ctx,field,color){
 
 	};
 	this.moveDown = function(){
-		if(this.canMoveDown()){
+		if(this.canMoveDown() && !this.isOnTheBottom){
 			switch(this.state){
 				case 1:
 				for(var i = this.cubes.length-1;i>=0;i--){
@@ -396,7 +397,7 @@ var sObject  = function(xLock,yLock,ctx,field,color){
 	};
 
 	this.invertState = function(){
-		if(this.state==1){
+		if(this.state==1 && !this.isOnTheBottom){
 			if(this.cubes[0].canMove(this.x+1,this.y+2) && this.cubes[1].canMove(this.x+1,this.y+1)){
 				this.cubes[0].moveXY(this.x+1,this.y+2);
 				this.cubes[1].moveXY(this.x+1,this.y+1);
@@ -405,7 +406,7 @@ var sObject  = function(xLock,yLock,ctx,field,color){
 				this.state = 2;
 				this.draw();
 			}
-		}else if(this.state==2){
+		}else if(this.state==2 && !this.isOnTheBottom){
 			if(this.cubes[0].canMove(this.x+1,this.y) && this.cubes[3].canMove(this.x-1,this.y+1)){
 				this.cubes[0].moveXY(this.x+1,this.y);
 				this.cubes[1].moveXY(this.x,this.y);
@@ -421,10 +422,10 @@ var sObject  = function(xLock,yLock,ctx,field,color){
 };
 var ZObject  = function(xLock,yLock,ctx,field,color){
 	this.cubes = [
-				new Cube(xLock-1,yLock,ctx,field,color),
-				new Cube(xLock,yLock,ctx,field,color),
-				new Cube(xLock,yLock+1,ctx,field,color),
-				new Cube(xLock+1,yLock+1,ctx,field,color)
+				new Cube(xLock-1,yLock,ctx,field,color,4),
+				new Cube(xLock,yLock,ctx,field,color,4),
+				new Cube(xLock,yLock+1,ctx,field,color,4),
+				new Cube(xLock+1,yLock+1,ctx,field,color,4)
 		];
 	this.field = field;
 	this.isOnTheBottom = false;
@@ -450,7 +451,7 @@ var ZObject  = function(xLock,yLock,ctx,field,color){
 
 	};
 	this.moveDown = function(){
-		if(this.canMoveDown()){
+		if(this.canMoveDown() && !this.isOnTheBottom){
 			switch(this.state){
 				case 1:
 				for(var i = this.cubes.length-1;i>=0;i--){
@@ -529,7 +530,7 @@ var ZObject  = function(xLock,yLock,ctx,field,color){
 	};
 
 	this.invertState = function(){
-		if(this.state==1){
+		if(this.state==1 && !this.isOnTheBottom){
 			if(this.cubes[0].canMove(this.x-1,this.y+2) && this.cubes[1].canMove(this.x-1,this.y+1)){
 				this.cubes[0].moveXY(this.x-1,this.y+2);
 				this.cubes[1].moveXY(this.x-1,this.y+1);
@@ -538,7 +539,7 @@ var ZObject  = function(xLock,yLock,ctx,field,color){
 				this.state = 2;
 				this.draw();
 			}
-		}else if(this.state==2){
+		}else if(this.state==2 && !this.isOnTheBottom){
 			if(this.cubes[0].canMove(this.x-1,this.y) && this.cubes[3].canMove(this.x+1,this.y+1)){
 				this.cubes[0].moveXY(this.x-1,this.y);
 				this.cubes[1].moveXY(this.x,this.y);
@@ -555,10 +556,10 @@ var ZObject  = function(xLock,yLock,ctx,field,color){
 
 var lObject = function(xLock,yLock,ctx,field,color){
 	this.cubes = [
-				new Cube(xLock,yLock,ctx,field,color),
-				new Cube(xLock,yLock+1,ctx,field,color),
-				new Cube(xLock,yLock+2,ctx,field,color),
-				new Cube(xLock-1,yLock+2,ctx,field,color)
+				new Cube(xLock,yLock,ctx,field,color,3),
+				new Cube(xLock,yLock+1,ctx,field,color,3),
+				new Cube(xLock,yLock+2,ctx,field,color,3),
+				new Cube(xLock-1,yLock+2,ctx,field,color,3)
 		];
 	this.field = field;
 	this.isOnTheBottom = false;
@@ -585,7 +586,7 @@ var lObject = function(xLock,yLock,ctx,field,color){
 
 	}
 	this.moveDown = function(){
-		if(this.canMoveDown()){
+		if(this.canMoveDown() && !this.isOnTheBottom){
 			switch(this.state){
 				case 1:
 				case 2:
@@ -695,7 +696,7 @@ var lObject = function(xLock,yLock,ctx,field,color){
 		return true;
 	}
 	this.invertState = function(){
-		if(this.state==1){
+		if(this.state==1 && !this.isOnTheBottom){
 			if(this.cubes[0].canMove(this.x-1,this.y+1) && this.cubes[3].canMove(this.x+2,this.y+2)){
 				this.cubes[0].moveXY(this.x-1,this.y+1);
 				this.cubes[1].moveXY(this.x-1,this.y+2);
@@ -704,7 +705,7 @@ var lObject = function(xLock,yLock,ctx,field,color){
 				this.draw();
 				this.state = 2;
 			};
-		}else if(this.state==2){
+		}else if(this.state==2 && !this.isOnTheBottom){
 			if(this.cubes[2].canMove(this.x-1,this.y) && this.cubes[3].canMove(this.x,this.y)){
 				this.cubes[0].moveXY(this.x-1,this.y+2);
 				this.cubes[1].moveXY(this.x-1,this.y+1);
@@ -713,9 +714,9 @@ var lObject = function(xLock,yLock,ctx,field,color){
 				this.state = 3;
 				this.draw();
 			}
-		}else if(this.state==3){
+		}else if(this.state==3 && !this.isOnTheBottom){
 			if(this.cubes[1].canMove(this.x,this.y+1) && this.cubes[2].canMove(this.x,this.y+2)){
-				console.log("Invert to 3");
+			
 				this.cubes[0].moveXY(this.x,this.y);
 				this.cubes[1].moveXY(this.x,this.y+1);
 				this.cubes[2].moveXY(this.x,this.y+2);
@@ -731,10 +732,10 @@ var lObject = function(xLock,yLock,ctx,field,color){
 
 var Lobject = function(xLock,yLock,ctx,field,color){
 	this.cubes = [
-				new Cube(xLock,yLock,ctx,field,color),
-				new Cube(xLock,yLock+1,ctx,field,color),
-				new Cube(xLock,yLock+2,ctx,field,color),
-				new Cube(xLock+1,yLock+2,ctx,field,color)
+				new Cube(xLock,yLock,ctx,field,color,2),
+				new Cube(xLock,yLock+1,ctx,field,color,2),
+				new Cube(xLock,yLock+2,ctx,field,color,2),
+				new Cube(xLock+1,yLock+2,ctx,field,color,2)
 		];
 	this.field = field;
 	this.isOnTheBottom = false;
@@ -880,7 +881,7 @@ var Lobject = function(xLock,yLock,ctx,field,color){
 
 	};
 	this.invertState = function(){
-		if(this.state == 1){
+		if(this.state == 1 && !this.isOnTheBottom){
 			if(this.cubes[0].canMove(this.x-1,this.y+2) && this.cubes[3].canMove(this.x+1,this.y+1)){
 				this.cubes[0].moveXY(this.x-1,this.y+2);
 				this.cubes[1].moveXY(this.x,this.y+2);
@@ -890,7 +891,7 @@ var Lobject = function(xLock,yLock,ctx,field,color){
 				this.draw();
 			};
 
-		}else if(this.state ==2){
+		}else if(this.state ==2 && !this.isOnTheBottom){
 			if(this.cubes[0].canMove(this.x,this.y+1) && this.cubes[1].canMove(this.x,this.y) && this.cubes[2].canMove(this.x,this.y-1) &&
 				this.cubes[3].canMove(this.x-1,this.y-1)){
 				this.cubes[0].moveXY(this.x,this.y+1);
@@ -899,7 +900,7 @@ var Lobject = function(xLock,yLock,ctx,field,color){
 				this.cubes[3].moveXY(this.x-1,this.y-1);
 				this.state = 3;
 			};
-		}else if(this.state == 3){
+		}else if(this.state == 3 && !this.isOnTheBottom){
 			if(this.cubes[3].canMove(this.x+1,this.y+2)){
 				this.cubes[0].moveXY(this.x,this.y);
 				this.cubes[1].moveXY(this.x,this.y+1);
@@ -915,10 +916,10 @@ var Lobject = function(xLock,yLock,ctx,field,color){
 };
 var Iobject = function(xLock,yLock,ctx,field,color){
 	this.cubes = [
-				 new Cube(xLock, yLock,ctx,field,color),
-				 new Cube(xLock, yLock+1,ctx,field,color),
-				 new Cube(xLock, yLock+2,ctx,field,color),
-				 new Cube(xLock, yLock+3,ctx,field,color)
+				 new Cube(xLock, yLock,ctx,field,color,1),
+				 new Cube(xLock, yLock+1,ctx,field,color,1),
+				 new Cube(xLock, yLock+2,ctx,field,color,1),
+				 new Cube(xLock, yLock+3,ctx,field,color,1)
 				 ];
 	this.field = field;
 	this.isOnTheBottom = false;
@@ -953,17 +954,16 @@ var Iobject = function(xLock,yLock,ctx,field,color){
 			}
 		
 		for(var i = 0; i< this.field.length; i++){
-				console.log(this.field[i]);
 			}
 	}
 
 	this.canMoveDown = function(x,y){
 		if(this.state == 1){
-			return this.cubes[3].canMove(x,y+1);
+			return this.cubes[3].canMoveDown();
 		}else if(this.state == 0){
 			var length = this.cubes.length-1;
 			for(var i = 0; i<length;i++){
-				if(!this.cubes[i].canMove(x,y+1)){
+				if(!this.cubes[i].canMoveDown()){
 					return false;;
 				};
 			}
@@ -1033,7 +1033,7 @@ var Iobject = function(xLock,yLock,ctx,field,color){
 			};			
 		};
 	this.invertState = function(){
-		if(this.state == 1){
+		if(this.state == 1 ){
 			var length = this.cubes.length;
 			for(var i = 1; i<length;i++){
 				if(!this.cubes[i].canMove(this.x+i,this.y-3)){
@@ -1070,14 +1070,15 @@ var Iobject = function(xLock,yLock,ctx,field,color){
 
 };
 		
-var Cube = function(xLock,yLock,ctx,field,color){
+var Cube = function(xLock,yLock,ctx,field,color,number){
 	this.color = color;
 	this.field = field;
+	this.number = number;
 	this.size = 20;
 	this.ctx = ctx;
 	this.x = xLock;
 	this.y = yLock;
-	this.width = this.size;field
+	this.width = this.size;
 	this.height = this.size;
 	this.isOnTheBottom = false;
 	
@@ -1149,8 +1150,11 @@ var Cube = function(xLock,yLock,ctx,field,color){
 			};
 	
 	this.canMove = function(x,y){
-		console.log(x + ":" + y);
-		return this.field[x][y] === 0;
+		try{
+		return this.field[x][y] == 0;
+		}catch(err){
+		
+		}
 	};
 
 	this.clear = function(){
@@ -1161,9 +1165,67 @@ var Cube = function(xLock,yLock,ctx,field,color){
 	this.draw = function(){
 			ctx.fillStyle=this.color;
 			ctx.fillRect(this.x *20 ,this.y *20,this.width,this.height);
-			this.field[this.x][this.y] = 1;
+			this.field[this.x][this.y] = number;
 		};	
 	}
+	var isFullRow = function(field){
+	var width = field.length;
+	var fullRow = true;
+	var height = field[0].length-1;
+	for(var i = height; i>=0;i--){
+		fullRow = true;
+		for(var j = width-1;j>=0;j--){
+			if(field[j][i]==0){
+				fullRow = false;
+				}
+			};
+		if(fullRow){
+			return i
+		};
+	};
+	return 0;
+};
+var redDrawFullRow = function(field,ctx,fullRow){
+	var score = Number(document.getElementById("score").innerHTML);
+	score +=100;
+	document.getElementById("score").innerHTML = score;
+	var width = field.length;
+	var height = field[0].length-1;
+	var emptyRow= false;
+	for(var i = fullRow;i>0;i--){
+		emptyRow = false;
+		for(var j = width-1;j>=0;j--){
+			field[j][i]=field[j][i-1];
+			ctx.fillStyle = "FFFFFF";
+			ctx.fillRect(j*20,i*20,20,20);
+			switch(field[j][i]){
+				case 1: ctx.fillStyle="000000";
+					break;
+				case 2: ctx.fillStyle = "0000FF";
+					break;
+				case 3: ctx.fillStyle = "00FF00";
+					break;
+				case 4: ctx.fillStyle = "00FFFF";
+					break;
+				case 5: ctx.fillStyle = "FF00FF";
+					break;
+				case 6: ctx.fillStyle = "FFFF00";
+					break;
+				case 7:	ctx.fillStyle = "FF0000";
+					break;
+				case 0:ctx.fillStyle = "FFFFFF";
+					continue;
+				}
+			ctx.fillRect(j*20,i*20,20,20);
+			}
+			
+		}
+	var row = isFullRow(field);
+	if(row!=0){
+		redDrawFullRow()
+	}
+	
+}
 	
 	var c =document.getElementById("tetris");
 	
@@ -1181,13 +1243,18 @@ var Cube = function(xLock,yLock,ctx,field,color){
 		};	
 	var myTimer = window.setInterval(function(){
 	if(cube.isOnTheBottom){
+			var row = isFullRow(field);
+			if(row!=0){
+				console.log("draing");
+				redDrawFullRow(field,ctx,row);
+			}
 			cube = getRandomElement();
 			c.onkeydown = function(env){
 			var key = env.keyCode;	
 			cube.moveEvent(key);
 			};
 			cube.draw();
-			if(cube.isOnTheBottom){
+			if(!cube.canMoveDown()){
 				alert("You lost!");
 			}
 	};
@@ -1197,5 +1264,5 @@ var Cube = function(xLock,yLock,ctx,field,color){
 
 };
 	
-tetris();
+var tetris = new Tetris();
 
